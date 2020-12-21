@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8">
+				<title>WMS test page</title>
+        <script type="text/javascript">
+function setURL() {
+	theURL = window.document.getElementById("baseurl");
+	theForm = window.document.getElementById("myForm"); 
+	theForm.action = theURL.value;
+	theSRSCRS = window.document.getElementById("SRSCRS");
+	theVersion = window.document.getElementById("version").value;
+	if (theVersion == "1.3.0") {
+		theSRSCRS.name = "CRS";
+		window.document.getElementById("versionLabel").innerHTML= "CRS";
+		window.document.getElementById("bboxLabel").innerHTML= "latmin,lonmin,latmax,lonmax";
+	} else {
+		theSRSCRS.name = "SRS";
+		window.document.getElementById("versionLabel").innerHTML = "SRS";
+		window.document.getElementById("bboxLabel").innerHTML= "lonmin,latmin,lonmax,latmax";
+	}
+}
+</script>
+
+
+		    <style type="text/css">
+<!--
+.style1 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+}
+.style2 {font-size: 9px}
+-->
+        </style>
+</head>
+		<body>
+				<h2 >
+						OGC Open Web Services test page...				</h2>
+				  <table>
+          <tr>
+								  <td width="78"><div align="right"><span class="style2">base URL</span></div></td>
+								  <td width="415">
+				    <input name="baseurl" type="text" id="baseurl" value="https://gisedu.itc.utwente.nl/cgi-bin/mapserv.exe" size="50"  />					  </td>
+					  </tr>
+					  <form action="" target="_blank" class="style1" name="myForm" id="myForm">
+				
+								<tr>
+								  <td width="78"><div align="right"><span class="style2">map file</span></div></td>
+								  <td width="415">
+								    <span class="style2">
+							    <input name="map" id="map" type="text" size="50" value="d:/iishome/student/[yourSnum]/thailand/[mapfileName].map"  />
+							    <br />
+							    for UMN Mapserver (others: leave blank)</span></td>
+					  </tr>
+								<tr>
+										<td><div align="right"><span class="style2">
+										  SERVICE										</div></td>
+										<td>WMS
+												<input name="SERVICE" type="hidden" size="50" value="WMS" />
+												</span>
+								</tr>
+								<tr>
+										<td><div align="right"><span class="style2">
+										  VERSION										</span></div></td>
+										<td>
+												<span class="style2">
+												<select name="VERSION" id="version" onChange="setURL()">
+												  <option value="1.1.1">1.1.1</option>
+												  <option value="1.3.0" selected>1.3.0</option>
+											  </select>
+												</span> </td>
+								</tr>
+								<tr>
+										<td><div align="right"><span class="style2">
+										  REQUEST										</span></div></td>
+										<td>
+												<span class="style2">
+												<select name="REQUEST" id="select3">
+												  <option value="GetCapabilities">GetCapabilities</option>
+												  <option value="GetMap" >GetMap</option>
+											  </select>
+												</span> </td>
+								</tr>
+								<tr>
+										<td><div align="right"><span class="style2" id="versionLabel">
+										  SRS</span></div></td>
+										<td>
+												<input name="SRS" id="SRSCRS" type="text" value="EPSG:4326" size="50" />										</td>
+								</tr>
+								<tr>
+										<td><div align="right"><span class="style2">
+										  BBOX										</span></div></td>
+										<td>
+												<input name="BBOX" type="text" value="5.6,97.3,20.5,105.7" size="50" />						
+							    <br />
+							    <span class="style2" id="bboxLabel">lonmin,latmin,lonmax,latmax</span></td>
+								</tr>
+								<tr>
+										<td><div align="right"><span class="style2">
+										  FORMAT										</span></div></td>
+										<td>
+												<input name="FORMAT" type="text" value="image/png" size="50" />										</td>
+								</tr>
+								<tr>
+										<td><div align="right"><span class="style2">
+										  WIDTH										</span></div></td>
+										<td>
+												<input name="WIDTH" type="text" value="400" size="50" />										</td>
+								</tr>
+								<tr>
+										<td><div align="right"><span class="style2">
+										  HEIGHT										</span></div></td>
+										<td>
+												<input name="HEIGHT" type="text" value="600" size="50" />										</td>
+								</tr>
+								<tr>
+										<td><div align="right"><span class="style2">
+										  LAYERS										</span></div></td>
+										<td>
+												<input name="LAYERS" type="text" value="forest" size="50" />										</td>
+								</tr>
+								<tr>
+										<td><div align="right"><span class="style2">
+										  STYLES										</span></div></td>
+										<td>
+												<span class="style2">
+												<input name="STYLES" type="text" size="50" />
+												<br />
+												leave blank for default style(s)										</span></td>
+								</tr>
+								<tr>
+										<td>
+
+								      <div align="right">
+								        <input type="Submit" Name="Submit" value="Submit" onClick="setURL()" />								
+				        </div></td></tr>
+		</form>
+				  </table>
+</body>
+</html>

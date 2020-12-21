@@ -1,0 +1,106 @@
+MAP
+NAME "Thailand"
+IMAGECOLOR 255 255 255
+SIZE 600 800
+IMAGETYPE PNG24
+PROJECTION
+    "init=epsg:4326" #latlon on WGS84
+END #default projection
+EXTENT -90000 290000 430000 630000
+WEB
+    METADATA
+        "ows_enable_request" "*"
+        "map" "d:/iishome/student/s2241587/EndProject/app/api/configWMS.map"
+        "ows_schemas_location" "http://schemas.opengeospatial.net"
+        "ows_title" "ThailandWMS"
+        "ows_onlineresource" "https://gisedu.itc.utwente.nl/cgi-bin/mapserv.exe?map=d:/iishome/student/s2241587/EndProject/app/api/configWMS.map&"
+        "ows_srs" "EPSG:4326 EPSG:3857" #latlon
+        "wms_feature_info_mime_type" "text/plain"
+        "wms_feature_info_mime_type" "text/html"
+        "wms_server_version" "1.3.0"
+        "wms_formatlist" "image/png,image/gif,image/jpeg"
+        "wms_format" "image/png"
+        "wms_include_items" "all"
+    END #web metadata
+END #web
+
+SYMBOL
+   NAME "circle_sym"
+   TYPE ellipse
+   FILLED true
+    POINTS
+      1 1
+    END
+END #symbol
+SYMBOL
+    NAME "AiREAS"
+    TYPE TRUETYPE
+    FONT "ESRI_Default_Marker"
+    FILLED true
+    ANTIALIAS true
+    CHARACTER "b"
+END #symbol
+LEGEND
+    KEYSIZE 16 12
+    LABEL
+        COLOR 0 0 0
+        TYPE TRUETYPE
+        FONT "arial"
+        SIZE 10
+    END #label
+    STATUS ON
+    POSITION LR
+END #legend
+
+LAYER
+        NAME "AiREAS"
+        TYPE POINT
+        STATUS ON
+        TOLERANCE 5
+        DUMP TRUE
+      #---
+        CONNECTIONTYPE postgis
+        CONNECTION 
+        "user=s2241587 password=__s2241587___ dbname=c122 host=gip.itc.utwente.nl 
+        port=5434 options='-c client_encoding=UTF8'"
+        DATA "geom FROM 
+                (SELECT airbox_id, geom FROM s2241587.air_geom) 
+              AS query USING UNIQUE airbox_id USING SRID=4326"     
+
+    #---
+        PROJECTION
+          "init=epsg:4326"
+        END
+      #---
+        METADATA
+            "ows_title" "AiREAS Sensor Data"
+            "wms_abstract" "AiREAS Sensor Data"
+            "wms_include_items" "all"
+            "gml_featureid" "airbox_id"
+            "gml_include_items" "all"
+        END
+
+    #attribute to use for labels:
+    LABELITEM "Airbox id"
+    CLASS
+      NAME "Sensor"
+      TEMPLATE "templates/railroadquery.html"
+      STYLE
+        SYMBOL "AiREAS"
+        SIZE 12
+        COLOR 0 0 0
+      END #style
+      LABEL
+          COLOR 0 0 0
+          TYPE TRUETYPE
+          FONT "arial"
+          MINSIZE 5
+          MAXSIZE 8
+          POSITION AUTO
+          PARTIALS FALSE
+          BUFFER 2
+        END  #label
+    END #class
+END #layer AiREAS Sensor
+
+END #map

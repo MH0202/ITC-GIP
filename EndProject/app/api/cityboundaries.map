@@ -1,0 +1,86 @@
+MAP
+NAME "Boundaries of Dutch Cities"
+    IMAGECOLOR 255 255 255
+    TRANSPARENT ON
+    SIZE 1700 1700
+IMAGETYPE PNG24
+PROJECTION
+        "init=epsg:28992"
+    END
+ EXTENT -90000 290000 430000 630000
+WEB
+    METADATA
+        "ows_enable_request" "*"
+        "map" "d:/iishome/student/s2241587/EndProject/app/api/cityboundaries.map"
+        "ows_schemas_location" "http://schemas.opengeospatial.net"
+        "ows_title" "ThailandWMS"
+        "ows_onlineresource" "http://owsgip.itc.utwente.nl/cgi-bin/services/city_boundary?map=d:/iishome/student/s2241587/EndProject/app/api/cityboundaries.map&"
+        "ows_srs" "EPSG:4326 EPSG:28992 EPSG:3857 EPSG:3044" #latlon 
+        "wms_feature_info_mime_type" "text/plain"
+        "wms_feature_info_mime_type" "text/html"
+        "wms_server_version" "1.3.0"
+        "wms_formatlist" "image/png,image/gif,image/jpeg"
+        "wms_format" "image/png"
+        "wms_include_items" "all"
+    END #web metadata
+END #web
+
+SYMBOL
+    NAME "AiREAS"
+    TYPE TRUETYPE
+    FONT "ESRI_Default_Marker"
+    FILLED true
+    ANTIALIAS true
+    CHARACTER "b"
+END #symbol
+
+LAYER
+        NAME "WMS-WFS-PostGIS"
+        TYPE POLYGON
+        STATUS ON
+        DUMP TRUE
+      #---
+        CONNECTIONTYPE postgis
+        CONNECTION "user=exercises password=exercises host=gisedu.itc.utwente.nl
+                    port=5432 dbname=exercises options='-c client_encoding=UTF8'"
+        DATA "ogc_geom FROM 
+                (SELECT gid AS ogc_id, gm_code AS city_code,
+                        regexp_replace(gm_naam, 'Wijk (.. )', '') AS city_name,
+                        geom AS ogc_geom 
+                 FROM netherlands.municipality t
+                 WHERE gm_naam LIKE '%CITYNAME%') 
+              AS query USING UNIQUE ogc_id USING SRID=28992"             
+      #---
+        VALIDATION
+          "default_CITYNAME" "%"
+          "CITYNAME" ".+$"
+        END
+      #---
+        PROJECTION
+          "init=epsg:28992"
+        END
+      #---
+        METADATA
+            "wms_title" "Boundaries of Dutch Cities"
+            "wms_abstract" "Service to retrieve the boundary of Dutch cities. Specify the name of the desired city through the 'CITYNAME' parameter e.g. CITYNAME=Delft"
+            "wms_include_items" "all"
+            "wfs_title" "Dutch Municipalities"
+            "wfs_abstract" "Administrative boundary of Municipality."
+            "wfs_getfeature_formatlist" "geojson"
+            "gml_featureid" "ogc_id"
+            "gml_include_items" "all"
+        END
+      #---
+        CLASS
+            NAME "city"
+            STYLE
+                OUTLINECOLOR 0 76 153
+                WIDTH 1
+            END
+        END
+        OPACITY 60
+END 
+
+
+
+END #map
