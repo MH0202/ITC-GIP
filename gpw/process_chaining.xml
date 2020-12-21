@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Execute version="1.0.0" service="WPS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.opengis.net/wps/1.0.0" xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:wcs="http://www.opengis.net/wcs/1.1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">
+	<Identifier>
+		gs:Length
+	</Identifier>
+	<DataInputs>
+		<Input>
+			<Identifier>
+				feature
+			</Identifier>
+			<Reference mimeType="text/xml" xlink:href="http://geoserver/wps" method="POST">
+				<Body>
+					<Execute version="1.0.0" service="WPS">
+						<Identifier>
+							gs:IntersectionFeatureCollection
+						</Identifier>
+						<DataInputs>
+							<Input>
+								<Identifier>
+									first feature collection
+								</Identifier>
+								<Reference mimeType="application/json" xlink:href="https://gisedu.itc.utwente.nl/cgi-bin/mapserv.exe?map=d:/iishome/exercise/data/afrialiance/layers.map&amp;version=2.0.0&amp;service=WFS&amp;request=GetFeature&amp;typeName=streets&amp;outputFormat=geojson&amp;srsname=EPSG:28992" method="GET" />
+							</Input>
+							<Input>
+								<Identifier>
+									second feature collection
+								</Identifier>
+								<Reference mimeType="text/xml" xlink:href="http://geoserver/wps" method="POST">
+									<Body>
+										<Execute version="1.0.0" service="WPS">
+											<Identifier>
+												gs:BufferFeatureCollection
+											</Identifier>
+											<DataInputs>
+												<Input>
+													<Identifier>
+														features
+													</Identifier>
+													<Reference mimeType="text/xml" xlink:href="http://geoserver/wps" method="POST">
+														<Body>
+															<Execute version="1.0.0" service="WPS">
+																<Identifier>
+																	gs:Centroid
+																</Identifier>
+																<DataInputs>
+																	<Input>
+																		<Identifier>
+																			features
+																		</Identifier>
+																		<Reference mimeType="application/json" xlink:href="https://gisedu.itc.utwente.nl/cgi-bin/mapserv.exe?map=d:/iishome/exercise/data/afrialiance/layers.map&amp;version=2.0.0&amp;service=WFS&amp;request=GetFeature&amp;typeName=neighbourhood&amp;outputFormat=geojson&amp;srsname=EPSG:28992&amp;buname=Boddenkamp" method="GET" />
+																	</Input>
+																</DataInputs>
+																<ResponseForm>
+																	<RawDataOutput mimeType="application/json">
+																		<Identifier>
+																			result
+																		</Identifier>
+																	</RawDataOutput>
+																</ResponseForm>
+															</Execute>
+														</Body>
+													</Reference>
+												</Input>
+												<Input>
+													<Identifier>
+														distance
+													</Identifier>
+													<Data>
+														<LiteralData>
+															1000
+														</LiteralData>
+													</Data>
+												</Input>
+											</DataInputs>
+											<ResponseForm>
+												<RawDataOutput mimeType="application/json">
+													<Identifier>
+														result
+													</Identifier>
+												</RawDataOutput>
+											</ResponseForm>
+										</Execute>
+									</Body>
+								</Reference>
+							</Input>
+						</DataInputs>
+						<ResponseForm>
+							<RawDataOutput mimeType="application/json">
+								<Identifier>
+									result
+								</Identifier>
+							</RawDataOutput>
+						</ResponseForm>
+					</Execute>
+				</Body>
+			</Reference>
+		</Input>
+	</DataInputs>
+	<ResponseForm>
+		<RawDataOutput>
+			<Identifier>
+				result
+			</Identifier>
+		</RawDataOutput>
+	</ResponseForm>
+</Execute>
