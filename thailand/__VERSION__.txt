@@ -1,0 +1,13 @@
+Thailand exercise file directory.
+
+Version GisEdu_wms_wfs_OL4_osm_PG_6:
+
+- Setup for gisedu.itc.utwente.nl
+- for use with HTML exercise description (listings on website)
+- Can be used for WMS and WFS exercises
+- MapServer 6
+- using data in PostGIS database on 'exercises'
+- Can be used with Openlayers 4 with OSM basemap
+- Can be used with Openlayers GetFeatureInfo query (empty template provided)
+
+version 6.0, created 5 April 2018

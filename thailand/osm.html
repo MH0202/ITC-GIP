@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+  <!--include the OpenLayers CSS : -->
+<link rel="stylesheet" href="./lib/ol.css" type="text/css" />
+  <!--include the OpenLayers API :-->
+<script src="./lib/ol.js" type="text/javascript"></script>
+<title>OpenLayers 4 example</title>
+</head>
+<script type="text/javascript">
+//  wrap whole thing in a function:
+function init() {
+  //define map object & link to placeholder div:
+    myMap = new ol.Map({target: "mapDiv"});
+    // define layer as tiled map:
+  osmLayer = new ol.layer.Tile({
+    // load OSM (a connector predefined in the API) as source:
+    source: new ol.source.OSM()
+  });
+  // add layer to map:
+  myMap.addLayer(osmLayer);
+  // create a map view:
+  myMap.setView(
+    //center coords and zoom level:
+    new ol.View({ center: [11048334,1636275], zoom: 6})
+  );
+  myMap.addControl(new ol.control.MousePosition());
+  myMap.addControl(new ol.control.ScaleLine());
+} 
+</script>
+<!--run init script after page body loaded : -->
+<body onload="init()">
+<!--map placeholder div: -->
+<div id="mapDiv" style="width: 800px; height: 600px;">
+</div>
+</body>
+</html>

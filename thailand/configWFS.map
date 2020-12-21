@@ -1,0 +1,41 @@
+MAP
+  NAME Thailand
+  PROJECTION
+   "init=epsg:4326"
+  END
+  EXTENT 97.3 5.6 105.7 20.5 # lon/lat extents of Thailand
+  OUTPUTFORMAT
+      NAME "geojson"
+      DRIVER "OGR/GEOJSON"
+      MIMETYPE "application/json; subtype=geojson"
+      FORMATOPTION "STORAGE=stream"
+      FORMATOPTION "FORM=SIMPLE"
+  END
+  WEB
+    METADATA
+      "ows_enable_request" "*"
+      "map" "d:/iishome/student/s2241587/thailand/configWFS.map"
+      "ows_title" "Thailand WFS Server"
+      "ows_service" "WFS"
+      "wfs_onlineresource" "https://gisedu.itc.utwente.nl/cgi-bin/mapserv.exe?map=d:/iishome/student/s2241587/thailand/configWFS.map&"
+      "ows_srs" "EPSG:4326" #latlon 
+      "wfs_getfeature_formatlist" "geojson"
+    END #metadata
+  END #web
+  LAYER
+    NAME airportsWFS
+    TYPE POINT
+    STATUS ON
+    CONNECTIONTYPE postgis
+    CONNECTION "user=exercises password=exercises dbname=exercises host=gisedu.itc.utwente.nl port=5432 options='-c client_encoding=UTF8'"
+    DATA "geom FROM thailand.airports USING UNIQUE id USING srid=4326"
+    METADATA
+      "wfs_title" "airportsWFS"   
+      "gml_include_items" "all"
+      "gml_featureid" "id"
+      "wfs_srs" "EPSG:4326"
+      "wfs_extent" "97.3 5.6 105.7 20.5"
+    END #metadata
+    DUMP TRUE
+  END #layer airportsWFS
+END #map
