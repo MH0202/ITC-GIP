@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="lib/d3.v4.min.js"></script>
+    <style>
+      .chart {
+        background-color: rgb(245, 245, 245);
+        padding: 5px;
+      }
+      .chart rect {
+        fill: steelblue;
+      }
+      .axis text {
+        fill: black;
+        font: 10px sans-serif;
+      }
+      .axis path,
+      .axis line {
+        fill: none;
+        stroke: #000;
+      }
+      #mapDiv {
+        position: absolute;
+        left: 520px;
+        top: 8px;
+      }
+      #infoDiv {
+        position: absolute;
+        left: 520px;
+        top: 360px;
+        width: 400px;
+        height: 188px;
+        font: 18px sans-serif;
+      }
+      .mapSVG {
+        background-color: rgb(245, 245, 245);
+      }
+      .municipality {
+        fill: rgb(255, 240, 214);
+        stroke: rgb(255, 159, 227);
+      }
+      .propCircle {
+        fill: rgb(255, 0, 0);
+        opacity: 0.5;
+      }
+    </style>
+  </head>
+  <body>
+    <svg class="chart"></svg>
+    <!-- create a  div for showing map:-->
+    <!-- position set in CSS:-->
+    <div id="mapDiv"></div>
+    <!-- create a seperate div for showing attributes:-->
+    <!-- position set in CSS:-->
+    <div id="infoDiv"></div>
+
+    <script type="text/javascript">
+      // select the divs by id:
+      var mapDiv = d3.select('#mapDiv');
+      var infoDiv = d3.select('#infoDiv');
+
+      // code for the bar chart:
+      d3.csv(
+        'data/overijssel_population.csv',
+        function (error, data) {
+          var svgwidth = 500;
+          var barHeight = 20;
+          var svgheight = barHeight * data.length;
+          var xScale = d3
+            .scaleLinear()
+            .domain([
+              0,
+              d3.max(data, function (d) {
+                return +d.aant_inw;
+              }),
+            ])
+            .range([0, svgwidth]);
+          var theAxis = d3.axisBottom(xScale);
+          var chart = d3
+            .select('svg')
+            .attr('width', svgwidth)
+            .attr('height', svgheight + 30);
+          var bar = chart
+            .selectAll('g')
+            .data(data)
+            .enter()
+            .append('g')
+            .attr('transform', function (d, i) {
+              return 'translate(0,' + i * barHeight + ')';
+            });
+          bar
+            .append('rect')
+            // create id based on gm_code, to be able to select it:
+            .attr('id', function (d) {
+              return 'bar_' + d.gm_code;
+            })
+            .attr('width', function (d) {
+              return xScale(+d.aant_inw);
+            })
+            .attr('height', barHeight - 1)
+            // adding a mouseover event handler...
+            .on('mouseover', function (d) {
+              var gmCode = d.gm_code;
+              var gmName = d.gm_naam;
+              var gmPop = d.aant_inw;
+              // call function:
+              doHighlights(gmCode, gmName, gmPop, true);
+            })
+            // ...and a mouseout
+            .on('mouseout', function (d) {
+              var gmCode = d.gm_code;
+              doHighlights(gmCode, null, null, false);
+            });
+          chart
+            .append('g')
+            .attr('class', 'axis')
+            .attr('transform', 'translate(0,' + svgheight + ')')
+            .call(theAxis);
+        } //end of callback function
+      ); //end of d3.csv
+
+      var mapWidth = 400,
+        mapHeight = 350;
+      // create svg in mapDiv:
+      mapSVG = mapDiv
+        .append('svg')
+        .attr('class', 'mapSVG')
+        .attr('width', mapWidth)
+        .attr('height', mapHeight);
+
+      var myProj = d3
+        .geoMercator()
+        .center([6.4, 52.48])
+        .scale(16000)
+        .translate([mapWidth / 2, mapHeight / 2]);
+      var svgpath = d3.geoPath().projection(myProj);
+
+      //  load geojson:
+      d3.json(
+        'data/overijssel.json',
+        function (error, geojson) {
+          mapSVG
+            .selectAll('path')
+            .data(geojson.features)
+            .enter()
+            .append('path')
+            .attr('class', 'municipality')
+            // create id based on gm_code, to be able to select it:
+            .attr('id', function (d) {
+              return 'poly_' + d.properties.gm_code;
+            })
+            .attr('d', svgpath)
+            // adding a mouseover event handler...
+            .on('mouseover', function (d) {
+              var gmCode = d.properties.gm_code;
+              var gmName = d.properties.gm_naam;
+              var gmPop = d.properties.aant_inw;
+              // call function:
+              doHighlights(gmCode, gmName, gmPop, true);
+            })
+            // ...and a mouseout
+            .on('mouseout', function (d) {
+              var gmCode = d.properties.gm_code;
+              doHighlights(gmCode, null, null, false);
+            });
+        } //end of callback function
+      ); //end of d3.json
+
+      // function to set highlights and infoDiv content based on mouse events:
+      function doHighlights(gmCode, gmName, gmPop, highlight) {
+        if (highlight) {
+          // if true then highlight & show info
+          d3.select('#bar_' + gmCode).style('fill', 'red');
+          d3.select('#poly_' + gmCode).style('fill', 'red');
+          infoDiv.html(
+            gmCode + ': ' + gmName + '<br>' + gmPop + ' inhabitants.'
+          );
+        } else {
+          // if false then remove highlight & info
+          d3.select('#bar_' + gmCode).style('fill', 'steelblue');
+          d3.select('#poly_' + gmCode).style('fill', 'rgb(255,240,214)');
+          infoDiv.html('');
+        }
+      }
+    </script>
+  </body>
+</html>

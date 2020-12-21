@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script type="text/javascript" src="lib/d3.v4.min.js"></script>
+    <!--CSS styling for map elements:-->
+    <style>
+      .mapSVG {
+        background-color: rgb(250, 250, 250);
+      }
+      .municipality {
+        fill: rgb(255, 240, 214);
+        stroke: rgb(255, 159, 227);
+      }
+      .propCircle {
+        fill: rgb(255, 0, 0);
+        opacity: 0.5;
+      }
+    </style>
+  </head>
+  <body>
+    <svg class="mapSVG"></svg>
+    <script type="text/javascript">
+      var mapWidth = 400,
+        mapHeight = 350;
+      var mapSVG = d3
+        .select('svg')
+        .attr('width', mapWidth)
+        .attr('height', mapHeight);
+      // Define Mercator proj to center at data (lon-lat):
+      var myProj = d3
+        .geoMercator()
+        .center([6.4, 52.48])
+        .scale(16000)
+        .translate([mapWidth / 2, mapHeight / 2]);
+      //Define svg path generator using the projection
+      var svgpath = d3.geoPath().projection(myProj);
+      // asynchronously load geojson:
+      d3.json(
+        'data/overijssel.json',
+        function (error, geojson) {
+          mapSVG
+            .selectAll('path')
+            .data(geojson.features)
+            .enter()
+            // for each d create an svgpath that uses the geoPath generator:
+            .append('path')
+            .attr('class', 'municipality')
+            .attr('d', svgpath);
+          rScale = d3
+            .scaleLinear()
+            .domain([
+              0,
+              d3.max(geojson.features, function (d) {
+                return d.properties.aant_inw;
+              }),
+            ])
+            .range([0, 50]);
+          // another layer for the circles:
+          mapSVG
+            .selectAll('circle')
+            .data(geojson.features)
+            .enter()
+            // for each d create a circle:
+            .append('circle')
+            .attr('class', 'propCircle')
+            // calculates centroid X of geo path :
+            .attr('cx', function (d) {
+              return svgpath.centroid(d)[0];
+            })
+            // calculates centroid Y of geo path:
+            .attr('cy', function (d) {
+              return svgpath.centroid(d)[1];
+            })
+            // set r using rScale:
+            .attr('r', function (d) {
+              return rScale(+d.properties.aant_inw);
+            });
+        } //end of callback function
+      ); //end of d3.json
+    </script>
+  </body>
+</html>
